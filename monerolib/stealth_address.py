@@ -14,6 +14,6 @@ def generate_rand_output(pub_key, sec_key, index):
     tx_sec_key = hexlify(os.urandom(32))
     tx_pub_key = crypto.ge_scalarmult_base(tx_sec_key)
 
-    shared_sec = crypto.ge_scalarmult(tx_pub_key, sec_key)
+    shared_sec = crypto.generate_key_derivation(tx_pub_key, sec_key)
     return derive_public_key(shared_sec, index, pub_key), tx_pub_key
     
