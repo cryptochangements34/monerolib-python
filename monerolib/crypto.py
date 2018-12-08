@@ -1,6 +1,6 @@
 from . import ed25519
 import sha3
-import sys
+import os
 import struct
 from binascii import hexlify, unhexlify
 from . import conversions as conv
@@ -20,7 +20,11 @@ def sc_reduce(input):
 	return conv.intToHex(conv.hexToInt(input) % ed25519.l)
 	
 def sc_mulsub(a, b, c):
-    return (c - (a * b)) & ed25519.q
+    return (c - (a * b)) % ed25519.q
+
+def random_scalar():
+    rand = hexlify(os.urandom(32))
+    return sc_reduce(rand)
 
 def ge_add(P1, P2):
     point1 = conv.decodeHexPoint(P1)
@@ -53,5 +57,14 @@ def hash_to_scalar(data):
     return sc_reduce(hash)
 
 def derivation_to_scalar(derivation, index):
-    buf = derivation + index
-    return hash_to_scalar(buf)
+	buf = struct.pack("64sL", derivation, index)
+	return hash_to_scalar(buf)
+
+def generate_signature(prefix_hash, pub, sec):
+    if len(prefix_hash) != 64:
+        return "prefix_hash must be 32 bytes"
+    k = random_scalar()
+    kG = ge_scalarmult_base(k)
+    sigc = hash_to_scalar(prefix_hash + pub + sec)
+    sigr = sc_mulsub(sigc, sec, k)
+    return sigc, sigr

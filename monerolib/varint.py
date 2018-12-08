@@ -20,7 +20,7 @@ def readVarInt(data, pop_bytes):
 			break
 	if pop_bytes:
 		for x in range(0, pos):
-			data.pop(0)
+			data.pop(x)
 	return result
 
 def encodeVarInt(data):
