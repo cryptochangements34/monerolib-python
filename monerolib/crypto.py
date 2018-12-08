@@ -20,7 +20,7 @@ def sc_reduce(input):
 	return conv.intToHex(conv.hexToInt(input) % ed25519.l)
 	
 def sc_mulsub(a, b, c):
-    return (c - (a * b)) % ed25519.q
+    return conv.intToHex((conv.hexToInt(c) - (conv.hexToInt(a) * conv.hexToInt(b))) % ed25519.q)
 
 def random_scalar():
     rand = hexlify(os.urandom(32))
