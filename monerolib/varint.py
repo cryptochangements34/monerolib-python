@@ -10,7 +10,7 @@ def readVarInt(data, pop_bytes):
 		i = int(data[pos], 16)
 		if i >= 128:
 			isLastByteInVarInt = False
-			print i
+			print(i)
 			i -= 128
 		result += (i * (128 ** c))
 		c += 1
